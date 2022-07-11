@@ -1,0 +1,80 @@
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+  New Post
+</button>
+<center>
+
+<div class="card" style="width: 100rem">
+
+  <div class="card-body" style="scroll:auto" >
+    <h5 class="card-title">{{ object.name }}
+<p>{{ object.description }}</p></h5>
+    <p class="card-text"> <h1>Recent Posts</h1><br></br><div id="output"></div></p>
+  
+  </div>
+</div>
+      <form id="form" method="POST" enctye="multipart/form-data">
+         <textarea id="text" type="text" name="text" style="width:50%;margin-left:10px"></textarea>
+                 <input id="media" type="file" name="image">
+         <input  type="submit" name="submit" value="submit">
+      </form>
+
+
+</div>
+</center>
+<script>
+         $('#form').on('submit', function(e){
+             
+         e.preventDefault();
+         
+           $.ajax({
+                type : "POST", 
+                url: "{% url 'ajax_posting' %}",
+                data: {
+                 "text" : $('#text').val(),
+                 "image" : "$('#media').val()",
+                 csrfmiddlewaretoken: '{{ csrf_token }}',
+                 dataType: "json",
+         
+                },
+                
+                success: function(data){
+                   $('#output').html(data.msg) /* response message */
+                },
+         
+                failure: function() {
+                    
+                }
+         
+         
+            });
+         
+         
+                 });  
+                 
+        function fun(){
+           $.ajax({
+                type : "GET", 
+                url: "http://localhost:8000/api/posts?community={{object.id}}",
+                success: function(data){
+                   for(i in data){
+                   console.log(data[i].id) /* response message */
+                   $('#output').append(data[i].member + " " + "said" + " " +  data[i].text + "<br></br>")
+                   }
+
+                },
+         
+                failure: function() {
+                    
+                }
+         
+         
+            });
+         
+               }
+      var interval = setTimeout(fun,5000);    
+      </script>
